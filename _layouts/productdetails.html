@@ -8,9 +8,12 @@ head: snipcart.html
   <div class="product-description">
     <p>{{ page.name }}</p>
 
-    <p>
-      {{ page.content }}
-    </p>
+
+    <div>
+      {% include rating.html %}
+    </div>
+
+    <p>{{ page.content }}</p>
 
     <button class="snipcart-add-item"
       data-item-name="{{ page.name }}"

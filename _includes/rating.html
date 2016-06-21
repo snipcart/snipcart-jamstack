@@ -1,0 +1,72 @@
+<div class="product-stars"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.1.0/react.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.1.0/react-dom.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+
+<script type="text/babel">
+  var Star = React.createClass({
+    render: function() {
+      var parent = this.props.parent;
+
+      var className = "fa ";
+
+      if (parent.state.rating >= this.props.rating) {
+        className += "fa-star";
+      } else {
+        className += "fa-star-o";
+      }
+
+      return (
+        <a className={className}
+          href="#"
+          onClick={this.props.onClick.bind(null, this)}></a>
+        )
+    }
+  });
+
+  var ProductRater = React.createClass({
+    getInitialState: function() {
+      return {
+        rating: 0,
+        score: 0,
+        votes: 0
+      }
+    },
+
+    componentDidMount: function() {
+      Snipcart.api.products.metadata(this.props.productId)
+        .then(this.updateScore);
+    },
+
+    updateScore: function (meta) {
+      if (meta && meta.score && meta.votes) {
+        var rating = Math.round(meta.score / meta.votes);
+
+        this.setState({votes: meta.votes, score: meta.score, rating: rating})
+      }
+    },
+
+    starClicked: function(component, evnt) {
+      var e = evnt;
+      var votes = this.state.votes + 1;
+      var score = this.state.score + component.props.rating;
+
+      Snipcart.api.products.metadata(this.props.productId, {
+        votes: votes,
+        score: score
+      }).then (this.updateScore);
+    },
+
+    render: function() {
+      var stars = []
+      for (var i = 1; i <= 5; i++) {
+        stars.push(<Star parent={this} onClick={this.starClicked} rating={i} key={i} />)
+      }
+
+      return (<div>{stars}</div>)
+    }
+  });
+
+  ReactDOM.render(<ProductRater productId="{{ page.sku }}"/>, document.querySelector('.product-stars'));
+</script>
