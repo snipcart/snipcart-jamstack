@@ -49,7 +49,7 @@
     },
 
     starClicked: function(component, evnt) {
-      var ratedOn = store.get('ratedOn');
+      var ratedOn = store.get('ratedOn:' + this.props.productId);
 
       if (ratedOn) {
           this.toggleMessage('Looks like you already rated this product.');
@@ -60,7 +60,7 @@
       var votes = this.state.votes + 1;
       var score = this.state.score + component.props.rating;
 
-      store.set('ratedOn', new Date());
+      store.set('ratedOn:' + this.props.productId, new Date());
 
       Snipcart.api.products.metadata(this.props.productId, {
         votes: votes,
