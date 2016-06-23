@@ -1,8 +1,9 @@
-<div class="product-stars"></div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.1.0/react.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.1.0/react-dom.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/store.js/1.3.20/store.min.js"></script>
+
+<div class="product-stars"></div>
 
 <script type="text/babel">
   var Star = React.createClass({
@@ -30,7 +31,8 @@
       return {
         rating: 0,
         score: 0,
-        votes: 0
+        votes: 0,
+        message: null
       }
     },
 
@@ -42,20 +44,40 @@
     updateScore: function (meta) {
       if (meta && meta.score && meta.votes) {
         var rating = Math.round(meta.score / meta.votes);
-
         this.setState({votes: meta.votes, score: meta.score, rating: rating})
       }
     },
 
     starClicked: function(component, evnt) {
+      var ratedOn = store.get('ratedOn');
+
+      if (ratedOn) {
+          this.toggleMessage('Looks like you already rated this product.');
+          return;
+      }
+
       var e = evnt;
       var votes = this.state.votes + 1;
       var score = this.state.score + component.props.rating;
 
+      store.set('ratedOn', new Date());
+
       Snipcart.api.products.metadata(this.props.productId, {
         votes: votes,
         score: score
-      }).then (this.updateScore);
+      })
+      .then (this.updateScore)
+      .then (() => {
+        this.toggleMessage('Your vote has been recorded!');
+      });
+    },
+
+    toggleMessage: function (message) {
+      this.setState({message: message});
+
+      window.setTimeout(() => {
+        this.setState({message: null})
+      }, 5000);
     },
 
     render: function() {
@@ -63,8 +85,12 @@
       for (var i = 1; i <= 5; i++) {
         stars.push(<Star parent={this} onClick={this.starClicked} rating={i} key={i} />)
       }
-
-      return (<div>{stars}</div>)
+      return (
+        <div>
+          <div>{stars}</div>
+          <span className="flash-message">{this.state.message}</span>
+        </div>
+      )
     }
   });
 
