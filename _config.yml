@@ -1,0 +1,31 @@
+---
+title: Snipcart
+timezone: UTC
+collections:
+  posts:
+    title: Posts
+    output: true
+  products:
+    title: Products
+    output: true
+  uploads:
+    title: Uploads
+    output: true
+defaults:
+- scope:
+    path: ''
+    type: products
+  values:
+    layout: productdetails
+    name: ''
+    price: 0.0
+    sku: ''
+    image: ''
+    weight: 0.0
+- scope:
+    path: ''
+    type: pages
+  values:
+    layout: page
+snipcart_api_key: YjdiNWIyOTUtZTIyMy00MWMwLTkwNDUtMzI1M2M2NTgxYjE0
+permalink: pretty
