@@ -27,6 +27,5 @@ defaults:
     type: pages
   values:
     layout: page
-url: https://snipcart-jamstack.siteleaf.io
 snipcart_api_key: YjdiNWIyOTUtZTIyMy00MWMwLTkwNDUtMzI1M2M2NTgxYjE0
 permalink: pretty
